@@ -1,13 +1,13 @@
 #!/bin/sh
 
 #
-# (c) 2010-2023 Cezary Jackiewicz <cezary@eko.one.pl>
+# (c) 2010-2024 Cezary Jackiewicz <cezary@eko.one.pl>
 #
-# (c) 2021-2023 modified by Rafał Wabik - IceG - From eko.one.pl forum
+# (c) 2021-2024 modified by Rafał Wabik - IceG - From eko.one.pl forum
 #
 
 
-band() {
+band4g() {
 # see https://en.wikipedia.org/wiki/LTE_frequency_bands
 	echo -n "B${1}"
 	case "${1}" in
@@ -137,6 +137,8 @@ band5g() {
 		"102") echo " (6200 MHz)";;
 		"104") echo " (6700 MHz)";;
 		"105") echo " (600 MHz)";;
+		"106") echo " (900 MHz)";;
+		"109") echo " (700/1500 MHz)";;
 		"257") echo " (28 GHz)";;
 		"258") echo " (26 GHz)";;
 		"259") echo " (41 GHz)";;
@@ -151,30 +153,36 @@ band5g() {
 getdevicevendorproduct() {
 	devname="$(basename $1)"
 	case "$devname" in
+		'wwan'*'at'*)
+			devpath="$(readlink -f /sys/class/wwan/$devname/device)"
+			T=${devpath%/*/*/*}
+			if [ -e $T/vendor ] && [ -e $T/device ]; then
+				V=$(cat $T/vendor)
+				D=$(cat $T/device)
+				echo "pci/${V/0x/}${D/0x/}"
+			fi
+			;;
 		'ttyACM'*)
 			devpath="$(readlink -f /sys/class/tty/$devname/device)"
 			T=${devpath%/*}
-			echo "$(cat $T/idVendor)$(cat $T/idProduct)"
+			echo "usb/$(cat $T/idVendor)$(cat $T/idProduct)"
 			;;
 		'tty'*)
 			devpath="$(readlink -f /sys/class/tty/$devname/device)"
 			T=${devpath%/*/*}
-			echo "$(cat $T/idVendor)$(cat $T/idProduct)"
+			echo "usb/$(cat $T/idVendor)$(cat $T/idProduct)"
 			;;
 		*)
 			devpath="$(readlink -f /sys/class/usbmisc/$devname/device)"
 			T=${devpath%/*}
-			echo "$(cat $T/idVendor)$(cat $T/idProduct)"
+			echo "usb/$(cat $T/idVendor)$(cat $T/idProduct)"
 			;;
 	esac
 }
 
 RES="/usr/share/3ginfo-lite"
 
-idx=$1
-test -n "$idx" || idx=0
-
-DEVICE=$($RES/detect.sh $idx)
+DEVICE=$($RES/detect.sh)
 if [ -z "$DEVICE" ]; then
 	echo '{"error":"Device not found"}'
 	exit 0
@@ -187,26 +195,53 @@ else
 	O=$(gcom -d $DEVICE -s $RES/info.gcom 2>/dev/null)
 fi
 
+getpath() {
+	devname="$(basename $1)"
+	case "$devname" in
+	'wwan'*'at'*)
+		devpath="$(readlink -f /sys/class/wwan/$devname/device)"
+		P=${devpath%/*/*/*}
+		;;
+	'ttyACM'*)
+		devpath="$(readlink -f /sys/class/tty/$devname/device)"
+		P=${devpath%/*}
+		;;
+	'tty'*)
+		devpath="$(readlink -f /sys/class/tty/$devname/device)"
+		P=${devpath%/*/*}
+		;;
+	*)
+		devpath="$(readlink -f /sys/class/usbmisc/$devname/device/)"
+		P=${devpath%/*}
+		;;
+	esac
+}
 
-SECT=$(uci -q get 3ginfo.@3ginfo[$idx].network)
-
-SUB='@'
-if [[ "$SECT" == *"$SUB"* ]]; then
-		SEC=$(echo $SECT | sed 's/@//')
-else
-		SEC=$(uci -q get 3ginfo.@3ginfo[$idx].network)
+# --- modemdefine - WAN config ---
+CONFIG=modemdefine
+MODEMZ=$(uci show $CONFIG | grep -o "@modemdefine\[[0-9]*\]\.modem" | wc -l | xargs)
+if [[ $MODEMZ > 1 ]]; then
+	SEC=$(uci -q get modemdefine.@general[0].main_network)
+	fi	
+	if [[ $MODEMZ = "0" ]]; then
+	SEC=$(uci -q get 3ginfo.@3ginfo[0].network)
+	fi
+	if [[ $MODEMZ = 1 ]]; then
+	SEC=$(uci -q get modemdefine.@modemdefine[0].network)
 fi
+
 	if [ -z "$SEC" ]; then
-		P=$DEVICE
+		getpath $DEVICE
 		PORIG=$P
 		for DEV in /sys/class/tty/* /sys/class/usbmisc/*; do
-			P="/dev/"${DEV##/*/}
+			getpath "/dev/"${DEV##/*/}
 			if [ "x$PORIG" = "x$P" ]; then
 				SEC=$(uci show network | grep "/dev/"${DEV##/*/} | cut -f2 -d.)
 				[ -n "$SEC" ] && break
 			fi
 		done
-	fi
+	fi	
+# --- modemdefine config ---
 
 CONN_TIME="-"
 RX="-"
@@ -223,18 +258,21 @@ if [ -n "$NETUP" ]; then
 			CT=$((UPTIME-CT))
 		fi
 		if [ ! -z $CT ]; then
+
 			D=$(expr $CT / 60 / 60 / 24)
 			H=$(expr $CT / 60 / 60 % 24)
 			M=$(expr $CT / 60 % 60)
 			S=$(expr $CT % 60)
 			CONN_TIME=$(printf "%dd, %02d:%02d:%02d" $D $H $M $S)
+			CONN_TIME_SINCE=$(date "+%Y%m%d%H%M%S" -d "@$(($(date +%s) - CT))")
+			
 		fi
+		
 		IFACE=$(ifstatus $SEC | awk -F\" '/l3_device/ {print $4}')
 		if [ -n "$IFACE" ]; then
 			RX=$(ifconfig $IFACE | awk -F[\(\)] '/bytes/ {printf "%s",$2}')
 			TX=$(ifconfig $IFACE | awk -F[\(\)] '/bytes/ {printf "%s",$4}')
 		fi
-
 fi
 
 # CSQ
@@ -249,24 +287,76 @@ else
 fi
 
 # COPS numeric
+# see https://mcc-mnc.com/
+# Update: 28/04/2024 items: 2970
 COPS=""
 COPS_MCC=""
 COPS_MNC=""
-COPS_NUM=$(echo "$O" | awk -F[\"] '/^\+COPS: .,2/ {print $2}')
+COPS_NUM=$(echo "$O" | awk -F[\"] '/^\+COPS:\s*.,2/ {print $2}')
 if [ -n "$COPS_NUM" ]; then
 	COPS_MCC=${COPS_NUM:0:3}
 	COPS_MNC=${COPS_NUM:3:3}
 fi
 
-if [ -z "$FORCE_PLMN" ]; then
-	COPS=$(echo "$O" | awk -F[\"] '/^\+COPS: .,0/ {print $2}')
-else
-	[ -n "$COPS_NUM" ] && COPS=$(awk -F[\;] '/^'$COPS_NUM';/ {print $2}' $RES/mccmnc.dat)
+TCOPS=$(echo "$O" | awk -F[\"] '/^\+COPS:\s*.,0/ {print $2}')
+[ "x$TCOPS" != "x" ] && COPS="$TCOPS"
+
+if [ -z "$COPS" ]; then
+	if [ -n "$COPS_NUM" ]; then
+		COPS=$(awk -F[\;] '/^'$COPS_NUM';/ {print $3}' $RES/mccmnc.dat | xargs)
+		LOC=$(awk -F[\;] '/^'$COPS_NUM';/ {print $2}' $RES/mccmnc.dat)
+	fi
 fi
 [ -z "$COPS" ] && COPS=$COPS_NUM
 
-COPZ=$(echo $COPS | sed ':s;s/\(\<\S*\>\)\(.*\)\<\1\>/\1\2/g;ts')
-COPS=$(echo $COPZ | awk '{for(i=1;i<=NF;i++){ $i=toupper(substr($i,1,1)) substr($i,2) }}1')
+if [[ $COPS =~ " " ]]; then
+	COPS=$(echo "$COPS" | awk '{if(NF==2 && tolower($1)==tolower($2)){print $1}else{print $0}}')
+fi
+
+isp=$(sms_tool -d $DEVICE at "AT+COPS?"|sed -n '2p'|cut -d '"' -f2|tr -d '\r')
+isp_num="$COPS_MCC $COPS_MNC"
+isp_numws="$COPS_MCC$COPS_MNC"
+
+if [[ $COPS =~ ^[0-9]+$ ]]; then
+    if [[ "$COPS" = "$isp_num" || "$COPS" = "$isp_numws" ]]; then
+	if [[ -n "$isp" ]]; then
+		COPS=$(awk -F[\;] '/^'$isp';/ {print $3}' $RES/mccmnc.dat | xargs)
+		LOC=$(awk -F[\;] '/^'$isp';/ {print $2}' $RES/mccmnc.dat)
+	fi
+    fi
+fi
+
+
+# operator location from temporary config
+LOCATIONFILE=/tmp/location
+if [ -e "$LOCATIONFILE" ]; then
+	touch $LOCATIONFILE
+	LOC=$(cat $LOCATIONFILE)
+	if [ -n "$LOC" ]; then
+		LOC=$(cat $LOCATIONFILE)
+			if [[ $LOC == "-" ]]; then
+				rm $LOCATIONFILE
+				LOC=$(awk -F[\;] '/^'$COPS_NUM';/ {print $2}' $RES/mccmnc.dat)
+				if [ -n "$LOC" ]; then
+					echo "$LOC" > /tmp/location
+				fi
+			else
+				LOC=$(awk -F[\;] '/^'$COPS_NUM';/ {print $2}' $RES/mccmnc.dat)
+				if [ -n "$LOC" ]; then
+					echo "$LOC" > /tmp/location
+				fi
+			fi
+	fi
+else
+	if [[ "$COPS_MCC$COPS_MNC" =~ ^[0-9]+$ ]]; then
+		if [ -n "$LOC" ]; then
+			LOC=$(awk -F[\;] '/^'$COPS_MCC$COPS_MNC';/ {print $2}' $RES/mccmnc.dat)
+				echo "$LOC" > /tmp/location
+			else
+				echo "-" > /tmp/location
+		fi
+	fi
+fi
 
 T=$(echo "$O" | awk -F[,\ ] '/^\+CPIN:/ {print $0;exit}' | xargs)
 if [ -n "$T" ]; then
@@ -291,29 +381,19 @@ fi
 # CREG
 eval $(echo "$O" | awk -F[,] '/^\+CREG/ {gsub(/[[:space:]"]+/,"");printf "T=\"%d\";LAC_HEX=\"%X\";CID_HEX=\"%X\";LAC_DEC=\"%d\";CID_DEC=\"%d\";MODE_NUM=\"%d\"", $2, "0x"$3, "0x"$4, "0x"$3, "0x"$4, $5}')
 case "$T" in
-	0*)
-		REG="0";;
-	1*)
-		REG="1";;
-	2*)
-		REG="2";;
-	3*)
-		REG="3";;
-	5*)
-		REG="5";;
-	6*)
-		REG="6";;
-	7*)
-		REG="7";;
-	*)
-		REG="";;
+	0*) REG="0";;
+	1*) REG="1";;
+	2*) REG="2";;
+	3*) REG="3";;
+	5*) REG="5";;
+	6*) REG="6";;
+	7*) REG="7";;
+	*) REG="";;
 esac
 
 # MODE
-MODE_NUM=$(echo "$MODE_NUM" | tr -d '\r\n')
 if [ -z "$MODE_NUM" ] || [ "x$MODE_NUM" = "x0" ]; then
 	MODE_NUM=$(echo "$O" | awk -F[,] '/^\+COPS/ {print $4;exit}')
-	MODE_NUM=$(echo "$MODE_NUM" | tr -d '\r\n')
 fi
 case "$MODE_NUM" in
 	2*) MODE="UMTS";;
@@ -335,29 +415,29 @@ else
 	TAC_HEX="-"
 fi
 
-CONF_DEVICE=$(uci -q get 3ginfo.@3ginfo[$idx].device)
+CONF_DEVICE=$(uci -q get 3ginfo.@3ginfo[0].device)
 if echo "x$CONF_DEVICE" | grep -q "192.168."; then
 	if grep -q "Vendor=1bbb" /sys/kernel/debug/usb/devices; then
-		. $RES/hilink/alcatel_hilink.sh $DEVICE
+		. $RES/modem/hilink/alcatel_hilink.sh $DEVICE
 	fi
 	if grep -q "Vendor=12d1" /sys/kernel/debug/usb/devices; then
-		. $RES/hilink/huawei_hilink.sh $DEVICE
+		. $RES/modem/hilink/huawei_hilink.sh $DEVICE
 	fi
 	if grep -q "Vendor=19d2" /sys/kernel/debug/usb/devices; then
-		. $RES/hilink/zte.sh $DEVICE
+		. $RES/modem/hilink/zte.sh $DEVICE
 	fi
-	SEC=$(uci -q get 3ginfo.@3ginfo[$idx].network)
+	SEC=$(uci -q get 3ginfo.@3ginfo[0].network)
 	SEC=${SEC:-wan}
 else
 
 if [ -e /usr/bin/sms_tool ]; then
 	REGOK=0
-	[ "x$REG" = "x1" ] || [ "x$REG" = "x5" ] && REGOK=1
+	[ "x$REG" = "x1" ] || [ "x$REG" = "x5" ] || [ "x$REG" = "x6" ] || [ "x$REG" = "x7" ] && REGOK=1
 	VIDPID=$(getdevicevendorproduct $DEVICE)
 	if [ -e "$RES/modem/$VIDPID" ]; then
 		case $(cat /tmp/sysinfo/board_name) in
 			"zte,mf289f")
-				. "$RES/modem/19d21485"
+				. "$RES/modem/usb/19d21485"
 				;;
 			*)
 				. "$RES/modem/$VIDPID"
@@ -371,9 +451,11 @@ fi
 
 cat <<EOF
 {
-"connt":"$CONN_TIME",
-"conntx":"$TX",
-"connrx":"$RX",
+"conn_time":"$CONN_TIME",
+"conn_time_sec":"$CT",
+"conn_time_since":"$CONN_TIME_SINCE",
+"rx":"$RX",
+"tx":"$TX",
 "modem":"$MODEL",
 "mtemp":"$TEMP",
 "firmware":"$FW",
@@ -384,6 +466,7 @@ cat <<EOF
 "operator_name":"$COPS",
 "operator_mcc":"$COPS_MCC",
 "operator_mnc":"$COPS_MNC",
+"location":"$LOC",
 "mode":"$MODE",
 "registration":"$REG",
 "simslot":"$SSIM",
@@ -398,9 +481,9 @@ cat <<EOF
 "tac_d":"$T_DEC",
 "cid_dec":"$CID_DEC",
 "cid_hex":"$CID_HEX",
-"pci":"$(echo -n $PCI | tr -d '\r')",
+"pci":"$PCI",
 "earfcn":"$EARFCN",
-"pband":"$(echo -n $PBAND | tr -d '\r')",
+"pband":"$PBAND",
 "s1band":"$S1BAND",
 "s1pci":"$S1PCI",
 "s1earfcn":"$S1EARFCN",
@@ -413,10 +496,10 @@ cat <<EOF
 "s4band":"$S4BAND",
 "s4pci":"$S4PCI",
 "s4earfcn":"$S4EARFCN",
-"rsrp":"$(echo $RSRP | tr '\r' ' ')",
-"rsrq":"$(echo $RSRQ | tr '\r' ' ')",
-"rssi":"$(echo $RSSI | tr '\r' ' ')",
-"sinr":"$(echo $SINR | tr '\r' ' ')"
+"rsrp":"$RSRP",
+"rsrq":"$RSRQ",
+"rssi":"$RSSI",
+"sinr":"$SINR"
 }
 EOF
 exit 0
