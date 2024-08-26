@@ -5,8 +5,8 @@ on:
     paths:
       - '.github/workflows/noodles2.yml'
       - '.github/diy/main.sh'
-  schedule:
-    - cron: 0 */4 * * *
+#  schedule:
+#    - cron: 0 */4 * * *
   repository_dispatch:
   workflow_dispatch:
     inputs:
