@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qbittorrent
-PKG_VERSION:=4.6.5
+PKG_VERSION:=4.4.5
 PKG_RELEASE=1
 
 PKG_SOURCE:=qBittorrent-release-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/qbittorrent/qBittorrent/tar.gz/release-$(PKG_VERSION)?
-PKG_HASH:=f330042fd0b27530b4a7b70b5d7ab356b2c9246393761df3b06891dc9dd8c106
+PKG_HASH:=70c2128b44fe4df4dfc8afc765a304d70cf1b042b5214bcc855d8b3bbc9ccf36
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/qBittorrent-release-$(PKG_VERSION)
 
@@ -20,10 +20,11 @@ PKG_LICENSE:=GPL-2.0+
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:qbittorrent:qbittorrent
 
-PKG_BUILD_DEPENDS:=qt6tools/host
+PKG_BUILD_DEPENDS:=qttools
 
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
+PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -32,14 +33,14 @@ define Package/qbittorrent
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=BitTorrent
-	DEPENDS:=+USE_GLIBC:librt +USE_GLIBC:libpthread +libgcc +libstdcpp \
+	DEPENDS:=+libgcc +libstdcpp \
 		+rblibtorrent \
-		+libQt6Core \
-		+libQt6Network \
-		+libQt6Sql \
-		+libQt6Xml \
-		+qt6-plugin-libqopensslbackend \
-		+qt6-plugin-libqsqlite
+		+libopenssl \
+		+qt5-core \
+		+qt5-network \
+		+qt5-sql \
+		+qt5-xml \
+		+zlib
 	TITLE:=bittorrent client programmed in C++ / Qt
 	URL:=https://www.qbittorrent.org/
 	PROVIDES:=qBittorrent
@@ -55,15 +56,31 @@ endef
 
 CMAKE_OPTIONS += \
 	-DCMAKE_BUILD_TYPE=Release \
-	-DQT6=ON \
+	-DQT6=OFF \
 	-DSTACKTRACE=OFF \
 	-DWEBUI=ON \
 	-DGUI=OFF \
-	-DVERBOSE_CONFIGURE=ON \
-	-DQT_ADDITIONAL_PACKAGES_PREFIX_PATH=$(STAGING_DIR_HOSTPKG)
+	-DVERBOSE_CONFIGURE=ON
 
+# The pcre2 is compiled with support for mips16
+ifdef CONFIG_USE_MIPS16
+  TARGET_CFLAGS += -minterlink-mips16
+endif
+
+# Support the glibc
 ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS += -ldl -lrt -lpthread
+endif
+
+TARGET_CFLAGS += -std=c++17 -ffunction-sections -fdata-sections -flto
+TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed -flto
+
+# The pentium-mmx with lto will build failed on qt6
+ifeq ($(ARCH),i386)
+  ifneq ($(findstring pentium-mmx,$(CONFIG_CPU_TYPE)),)
+    TARGET_CFLAGS := $(filter-out -flto,$(TARGET_CFLAGS))
+    TARGET_LDFLAGS := $(filter-out -flto,$(TARGET_LDFLAGS))
+  endif
 endif
 
 define Package/qbittorrent/conffiles
@@ -73,11 +90,6 @@ endef
 define Package/qbittorrent/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/qbittorrent-nox $(1)/usr/bin
-
-	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d $(1)/usr/share/qbittorrent
-	$(INSTALL_BIN) ./files/qbittorrent.init $(1)/etc/init.d/qbittorrent
-	$(INSTALL_CONF) ./files/qbittorrent.config $(1)/etc/config/qbittorrent
-	$(INSTALL_CONF) ./files/qBittorrent.conf.example $(1)/usr/share/qbittorrent/qBittorrent.conf.example
 endef
 
 $(eval $(call BuildPackage,qbittorrent))

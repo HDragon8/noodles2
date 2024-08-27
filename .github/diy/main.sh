@@ -110,7 +110,8 @@ git clone --depth 1 https://github.com/linkease/istore && mv -n istore/luci/* ./
 #git clone --depth 1 https://github.com/AlexZhuo/luci-app-bandwidthd
 git clone --depth 1 https://github.com/Diciya/luci-app-broadbandacc
 git clone --depth 1 https://github.com/gSpotx2f/luci-app-log
-git clone --depth 1 https://github.com/linkease/openwrt-app-actions
+#git clone --depth 1 https://github.com/linkease/openwrt-app-actions
+git clone --depth 1 https://github.com/linkease/openwrt-app-actions && mv -n openwrt-app-actions/applications/* ./;rm -rf openwrt-app-actions
 git clone --depth 1 https://github.com/ZeaKyX/luci-app-speedtest-web
 git clone --depth 1 https://github.com/ZeaKyX/speedtest-web
 git clone --depth 1 https://github.com/Zxilly/UA2F
@@ -228,7 +229,7 @@ git_sparse_clone master "https://github.com/x-wrt/com.x-wrt" "x-wrt" natflow lua
 #mv -n openwrt-passwall/* ./ ; rm -Rf openwrt-passwall
 rm -rf openssl
 mv -n openwrt-package/* ./ ; rm -Rf openwrt-package
-mv -n openwrt-app-actions/applications/* ./;rm -rf openwrt-app-actions
+#mv -n openwrt-app-actions/applications/* ./;rm -rf openwrt-app-actions
 sed -i \
 -e 's?include \.\./\.\./\(lang\|devel\)?include $(TOPDIR)/feeds/packages/\1?' \
 -e 's?2. Clash For OpenWRT?3. Applications?' \
