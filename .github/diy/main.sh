@@ -61,6 +61,7 @@ git clone --depth 1 https://github.com/jerrykuku/luci-app-argon-config
 #git clone --depth 1 https://github.com/jerrykuku/luci-app-vssr
 git clone --depth 1 https://github.com/jerrykuku/luci-app-ttnode
 #git clone --depth 1 https://github.com/jerrykuku/luci-app-jd-dailybonus
+git clone --depth 1 https://github.com/noiver/luci-app-jd-dailybonus
 git clone --depth 1 https://github.com/jerrykuku/luci-app-go-aliyundrive-webdav
 git clone --depth 1 https://github.com/jerrykuku/lua-maxminddb
 git clone --depth 1 https://github.com/sirpdboy/luci-app-advanced
@@ -107,6 +108,8 @@ git clone --depth 1 https://github.com/linkease/nas-packages && mv -n nas-packag
 git clone --depth 1 https://github.com/linkease/nas-packages-luci && mv -n nas-packages-luci/luci/* ./; rm -rf nas-packages-luci
 git clone --depth 1 https://github.com/linkease/istore && mv -n istore/luci/* ./; rm -rf istore
 #git clone --depth 1 https://github.com/AlexZhuo/luci-app-bandwidthd
+git clone --depth 1 https://github.com/Diciya/luci-app-broadbandacc
+git clone --depth 1 https://github.com/gSpotx2f/luci-app-log
 git clone --depth 1 https://github.com/linkease/openwrt-app-actions
 git clone --depth 1 https://github.com/ZeaKyX/luci-app-speedtest-web
 git clone --depth 1 https://github.com/ZeaKyX/speedtest-web
@@ -208,9 +211,9 @@ mv -n luciapp/* ./ ; rm -Rf luciapp
 #libs/libdouble-conversion libs/qt6base libs/cxxopts libs/jpcre2 libs/alac \
 #utils/cpulimit devel/gn
 
-#git_sparse_clone develop "https://github.com/Ysurac/openmptcprouter-feeds" "enmptcp" luci-app-snmpd \
-#luci-app-packet-capture luci-app-mail msmtp
-#git_sparse_clone master "https://github.com/xiaoqingfengATGH/feeds-xiaoqingfeng" "xiaoqingfeng" homeredirect luci-app-homeredirect
+git_sparse_clone develop "https://github.com/Ysurac/openmptcprouter-feeds" "enmptcp" luci-app-snmpd \
+luci-app-packet-capture luci-app-mail msmtp
+git_sparse_clone master "https://github.com/xiaoqingfengATGH/feeds-xiaoqingfeng" "xiaoqingfeng" homeredirect luci-app-homeredirect
 
 git_sparse_clone master "https://github.com/x-wrt/packages" "x-wrtpack" net/nft-qos
 git_sparse_clone master "https://github.com/x-wrt/luci" "x-wrtluci" applications/luci-app-nft-qos
