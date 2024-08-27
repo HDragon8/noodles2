@@ -6,12 +6,13 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_LICENSE:=Apache-2.0
+LUCI_TITLE:=Qos over Nftables
+LUCI_DEPENDS:=+nft-qos
+LUCI_PKGARCH:=all
 
-LUCI_TITLE:=QoS over Nftables
-LUCI_DEPENDS:=+luci-base +luci-compat +nft-qos
-
-PKG_MAINTAINER:=Rosy Song <rosysong@rosinson.com>
+PKG_NAME:=luci-app-nft-qos
+PKG_VERSION:=1
+PKG_RELEASE:=1
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
