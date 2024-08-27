@@ -106,7 +106,7 @@ git clone --depth 1 https://github.com/ophub/luci-app-amlogic amlogic && mv -n a
 git clone --depth 1 https://github.com/linkease/nas-packages && mv -n nas-packages/{network/services/*,multimedia/*} ./; rm -rf nas-packages
 git clone --depth 1 https://github.com/linkease/nas-packages-luci && mv -n nas-packages-luci/luci/* ./; rm -rf nas-packages-luci
 git clone --depth 1 https://github.com/linkease/istore && mv -n istore/luci/* ./; rm -rf istore
-git clone --depth 1 https://github.com/AlexZhuo/luci-app-bandwidthd
+#git clone --depth 1 https://github.com/AlexZhuo/luci-app-bandwidthd
 git clone --depth 1 https://github.com/linkease/openwrt-app-actions
 git clone --depth 1 https://github.com/ZeaKyX/luci-app-speedtest-web
 git clone --depth 1 https://github.com/ZeaKyX/speedtest-web
@@ -152,13 +152,10 @@ rm -rf mosdns && rm -rf luci-app-mosdns
 git clone --depth 1 -b v5 https://github.com/sbwml/luci-app-mosdns openwrt-mos && mv -n openwrt-mos/{*mosdns,v2dat} ./; rm -rf openwrt-mos
 git clone --depth 1 https://github.com/sbwml/v2ray-geodata
 
-git_sparse_clone master "https://github.com/x-wrt/packages" "x-wrtpack" net/nft-qos
-git_sparse_clone master "https://github.com/x-wrt/luci" "x-wrtluci" applications/luci-app-nft-qos
-
 git_sparse_clone master "https://github.com/coolsnowwolf/packages" "leanpkg" net/miniupnpd net/mwan3 multimedia/UnblockNeteaseMusic-Go \
 multimedia/UnblockNeteaseMusic net/amule net/antileech net/baidupcs-web net/frp multimedia/gmediarender net/go-aliyundrive-webdav \
 net/qBittorrent-static net/qBittorrent net/transmission net/phtunnel libs/qtbase libs/qttools libs/rblibtorrent \
-net/uugamebooster net/verysync net/vlmcsd net/dnsforwarder net/nps net/tcpping net/netatalk net/pgyvpn net/n2n
+net/uugamebooster net/verysync net/vlmcsd net/dnsforwarder net/nps net/tcpping net/netatalk net/pgyvpn net/n2n net/ntpclient net/gowebdav
 mv -f miniupnpd miniupnpd-iptables
 git_sparse_clone master "https://github.com/coolsnowwolf/luci" "leluci" applications libs/luci-lib-fs
 mv -f applications luciapp
@@ -168,7 +165,7 @@ rm -rf luciapp/default-settings
 
 git_sparse_clone openwrt-23.05 "https://github.com/immortalwrt/packages" "immpkgs" net/mwol \
 net/sub-web net/dnsproxy net/haproxy net/v2raya net/cdnspeedtest net/keepalived net/dae net/modemband \
-net/subconverter net/ngrokc net/oscam net/njitclient net/scutclient net/gost net/gowebdav net/dufs \
+net/subconverter net/ngrokc net/oscam net/njitclient net/scutclient net/gost  net/dufs \
 libs/jpcre2 libs/wxbase libs/rapidjson libs/libcron libs/quickjspp libs/toml11 \
 utils/cpulimit utils/filebrowser utils/cups net/udp2raw net/msd_lite net/xfrpc net/bitsrunlogin-go \
 utils/phicomm-k3screenctrl net/apinger net/basicstation libs/sx1302_hal sound/spotifyd
@@ -215,7 +212,9 @@ mv -n luciapp/* ./ ; rm -Rf luciapp
 #luci-app-packet-capture luci-app-mail msmtp
 #git_sparse_clone master "https://github.com/xiaoqingfengATGH/feeds-xiaoqingfeng" "xiaoqingfeng" homeredirect luci-app-homeredirect
 
-git_sparse_clone master "https://github.com/x-wrt/com.x-wrt" "x-wrt" natflow lua-ipops luci-app-macvlan luci-app-3ginfo-lite luci-app-fakemesh
+git_sparse_clone master "https://github.com/x-wrt/packages" "x-wrtpack" net/nft-qos
+git_sparse_clone master "https://github.com/x-wrt/luci" "x-wrtluci" applications/luci-app-nft-qos
+git_sparse_clone master "https://github.com/x-wrt/com.x-wrt" "x-wrt" natflow lua-ipops luci-app-macvlan luci-app-3ginfo-lite luci-app-fakemesh urllogger
 #git_sparse_clone master "https://github.com/immortalwrt/immortalwrt" "immortal" package/network/utils/nftables \
 #package/network/utils/fullconenat package/network/utils/fullconenat-nft \
 #package/utils/mhz package/libs/libnftnl package/firmware/wireless-regdb
@@ -235,6 +234,14 @@ sed -i \
 -e 's/php7/php8/g' \
 -e 's/+docker /+docker +dockerd /g' \
 */Makefile
+
+#删除没有依赖的包
+rm -rf luci-app-noddos
+rm -rf luci-app-daed
+rm -rf luci-app-turboacc
+rm -rf luci-app-samba
+rm -rf luci-app-design-config
+rm -rf luci-app-pppwn
 
 sed -i 's/PKG_VERSION:=20240302/PKG_VERSION:=20240223/g; s/PKG_RELEASE:=$(AUTORELESE)/PKG_RELEASE:=1/g' webd/Makefile
 sed -i 's/luci-lib-ipkg/luci-base/g' luci-app-store/Makefile
