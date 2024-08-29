@@ -177,7 +177,8 @@ libs/jpcre2 libs/wxbase libs/rapidjson libs/libcron libs/quickjspp libs/toml11 \
 utils/cpulimit utils/filebrowser utils/cups net/udp2raw net/msd_lite net/xfrpc net/bitsrunlogin-go \
 utils/phicomm-k3screenctrl net/apinger net/basicstation libs/sx1302_hal sound/spotifyd
 git_sparse_clone openwrt-23.05 "https://github.com/immortalwrt/immortalwrt" "immortal" package/emortal/autocore package/emortal/automount package/emortal/ipv6-helper \
-package/utils/mhz package/network/utils/fullconenat package/network/utils/fullconenat-nft
+package/utils/mhz
+#package/network/utils/fullconenat package/network/utils/fullconenat-nft
 git_sparse_clone openwrt-23.05 "https://github.com/immortalwrt/luci" "immluci" applications protocols/luci-proto-minieap
 mv -n applications/* luciapp/; rm -rf applications
 
