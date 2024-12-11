@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2024-09-20 20:23+0000\n"
-"Last-Translator: Džiugas Januševičius <dziugas1959@hotmail.com>\n"
+"PO-Revision-Date: 2024-01-29 01:18+0000\n"
+"Last-Translator: Džiugas J <dziugas1959@hotmail.com>\n"
 "Language-Team: Lithuanian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsbmx7/lt/>\n"
 "Language: lt\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
 "19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
 "1 : 2);\n"
-"X-Generator: Weblate 5.8-dev\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:33
 msgid "Announcements"
@@ -24,15 +24,15 @@ msgstr "„BMX7“ poversijis"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:41
 msgid "Bandwidth"
-msgstr "Duomenų siuntimo ir perdavimo srauto pralaidumas"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/admin_status/index/bmx7_nodes.htm:3
 msgid "Bmx7 mesh nodes"
-msgstr "„Bmx7“ junglusis/tankusis mazgas"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:44
 msgid "CPU usage"
-msgstr "„CPU“ naudojimas"
+msgstr "„CPU“ vartojimas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/admin_status/index/bmx7_nodes.htm:12
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:79
@@ -41,7 +41,7 @@ msgstr "Įrenginys"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:57
 msgid "Interface"
-msgstr "Sąsaja ir/arba Sietuvas"
+msgstr "Sąsaja ir Sietuvas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/nodes_j.htm:81
 msgid "Last Desc"
@@ -66,15 +66,15 @@ msgstr "Sujungimai/Nuorodos"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:42
 msgid "Local net"
-msgstr "Vietinis tinklas"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:60
 msgid "Max rate"
-msgstr "Maks. sparta"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:45
 msgid "Memory usage"
-msgstr "Atminties naudojimas"
+msgstr "Atminties vartojimas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/admin_status/index/bmx7_nodes.htm:13
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/nodes_j.htm:80
@@ -90,7 +90,7 @@ msgstr "Vardas/Pavadinimas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:40
 msgid "Neighbours"
-msgstr "„Kaimynai“ (Protokolas/Tinkl.)"
+msgstr "Kaimynai"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:40
 msgid "Network"
@@ -126,11 +126,11 @@ msgstr "Matyti tinklo mazgai"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/nodes_j.htm:70
 msgid "Originators"
-msgstr "Kilmininkai"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:43
 msgid "Path Metric"
-msgstr "Kelio metrika"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/admin_status/index/bmx7_nodes.htm:10
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/nodes_j.htm:78
@@ -147,15 +147,15 @@ msgstr "Atsiųsta/Gauta reaktyviai „BpP“"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:80
 msgid "RX rate"
-msgstr "Atsiųsta/Gauta reaktyviai sparta"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:45
 msgid "Rating"
-msgstr "Įvertis"
+msgstr "Reitingas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:78
 msgid "Remote link-local IPv6"
-msgstr "Nuotolinio vietinio sujungimo IPv6"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:82
 msgid "Routes"
@@ -187,29 +187,27 @@ msgstr "Būklė/Būsena"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:63
 msgid "TX BpP"
-msgstr "Nusiųsta/Įkelta reaktyviai „BpP“"
+msgstr "Nusiųsta reaktyviai „BpP“"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:81
 msgid "TX rate"
-msgstr "Nusiųsta/Įkelta reaktyviai sparta"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/tunnels_j.htm:44
 msgid "Tun Metric"
-msgstr "„Tun“ metrika"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:42
 msgid "Tunnelled IPv4 address"
 msgstr ""
-"„Tuneliuotas“ – Praėjęs nuo vieno tinklo į kitą (protokolas) IPv4 adresas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:41
 msgid "Tunnelled IPv6 address"
 msgstr ""
-"„Tuneliuotas“ – Praėjęs nuo vieno tinklo į kitą (protokolas) IPv6 adresas"
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:46
 msgid "Tx queue"
-msgstr "Nusiųsti/Įkelti reaktyviai eilė"
+msgstr ""
 
 #: applications/luci-app-bmx7/root/usr/lib/lua/luci/view/bmx7/status_j.htm:59
 msgid "Type"

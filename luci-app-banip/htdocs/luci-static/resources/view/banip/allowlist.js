@@ -3,8 +3,6 @@
 'require fs';
 'require ui';
 
-let notMsg, errMsg;
-
 return view.extend({
 	load: function () {
 		return Promise.all([
@@ -18,16 +16,10 @@ return view.extend({
 			.then(function () {
 				document.querySelector('textarea').value = value;
 				document.body.scrollTop = document.documentElement.scrollTop = 0;
-				if (!notMsg) {
-					ui.addNotification(null, E('p', _('Allowlist modifications have been saved, reload banIP that changes take effect.')), 'info');
-					notMsg = true;
-				}
+				ui.addNotification(null, E('p', _('Allowlist modifications have been saved, start the Domain Lookup or restart banIP that changes take effect.')), 'info');
 			}).catch(function (e) {
 				document.body.scrollTop = document.documentElement.scrollTop = 0;
-				if (!errMsg) {
-					ui.addNotification(null, E('p', _('Unable to save modifications: %s').format(e.message)), 'error');
-					errMsg = true;
-				}
+				ui.addNotification(null, E('p', _('Unable to save modifications: %s').format(e.message)), 'error');
 			});
 	},
 	render: function (allowlist) {
