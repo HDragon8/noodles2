@@ -161,7 +161,7 @@ multimedia/UnblockNeteaseMusic net/amule net/antileech net/baidupcs-web net/frp 
 net/qBittorrent-static net/qBittorrent net/transmission net/phtunnel libs/qtbase libs/qttools libs/rblibtorrent \
 net/uugamebooster net/verysync net/vlmcsd net/dnsforwarder net/nps net/tcpping net/netatalk net/pgyvpn net/n2n net/ntpclient net/gowebdav
 mv -f miniupnpd miniupnpd-iptables
-git_sparse_clone master "https://github.com/coolsnowwolf/luci" "leluci" applications libs/luci-lib-fs
+git_sparse_clone openwrt-23.05 "https://github.com/coolsnowwolf/luci" "leluci" applications libs/luci-lib-fs
 mv -f applications luciapp
 git_sparse_clone master "https://github.com/coolsnowwolf/lede" "leanlede" package/lean package/network/services/shellsync package/network/services/e2guardian
 mv -n lean/* luciapp/; rm -rf lean
