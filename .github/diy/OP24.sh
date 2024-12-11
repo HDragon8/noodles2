@@ -161,7 +161,7 @@ multimedia/UnblockNeteaseMusic net/amule net/antileech net/baidupcs-web net/frp 
 net/qBittorrent-static net/qBittorrent net/transmission net/phtunnel libs/qtbase libs/qttools libs/rblibtorrent \
 net/uugamebooster net/verysync net/vlmcsd net/dnsforwarder net/nps net/tcpping net/netatalk net/pgyvpn net/n2n net/ntpclient net/gowebdav
 mv -f miniupnpd miniupnpd-iptables
-git_sparse_clone master "https://github.com/coolsnowwolf/luci" "leluci" applications libs/luci-lib-fs
+git_sparse_clone openwrt-23.05 "https://github.com/coolsnowwolf/luci" "leluci" applications libs/luci-lib-fs
 mv -f applications luciapp
 git_sparse_clone master "https://github.com/coolsnowwolf/lede" "leanlede" package/lean package/network/services/shellsync package/network/services/e2guardian
 mv -n lean/* luciapp/; rm -rf lean
@@ -170,16 +170,16 @@ rm -rf luciapp/autocore
 rm -rf luciapp/automount
 rm -rf luciapp/ipv6-helper
 
-git_sparse_clone openwrt-23.05 "https://github.com/immortalwrt/packages" "immpkgs" net/mwol \
+git_sparse_clone openwrt-24.10 "https://github.com/immortalwrt/packages" "immpkgs" net/mwol \
 net/sub-web net/dnsproxy net/haproxy net/v2raya net/cdnspeedtest net/keepalived net/dae net/modemband \
 net/subconverter net/ngrokc net/oscam net/njitclient net/scutclient net/gost  net/dufs \
 libs/jpcre2 libs/wxbase libs/rapidjson libs/libcron libs/quickjspp libs/toml11 \
 utils/cpulimit utils/filebrowser utils/cups net/udp2raw net/msd_lite net/xfrpc net/bitsrunlogin-go \
 utils/phicomm-k3screenctrl net/apinger net/basicstation libs/sx1302_hal sound/spotifyd
-git_sparse_clone openwrt-23.05 "https://github.com/immortalwrt/immortalwrt" "immortal" package/emortal/autocore package/emortal/automount package/emortal/ipv6-helper \
+git_sparse_clone openwrt-24.10 "https://github.com/immortalwrt/immortalwrt" "immortal" package/emortal/autocore package/emortal/automount package/emortal/ipv6-helper \
 package/utils/mhz
 #package/network/utils/fullconenat package/network/utils/fullconenat-nft
-git_sparse_clone openwrt-23.05 "https://github.com/immortalwrt/luci" "immluci" applications protocols/luci-proto-minieap
+git_sparse_clone openwrt-24.10 "https://github.com/immortalwrt/luci" "immluci" applications protocols/luci-proto-minieap
 mv -n applications/* luciapp/; rm -rf applications
 
 mv -n luciapp/* ./ ; rm -Rf luciapp
