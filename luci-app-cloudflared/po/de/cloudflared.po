@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2024-09-27 22:15+0000\n"
-"Last-Translator: Jens Nachtigall <github@jenszo.de>\n"
+"PO-Revision-Date: 2024-03-08 01:29+0000\n"
+"Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationscloudflared/de/>\n"
 "Language: de\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.8-dev\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/log.js:89
 msgid "All"
@@ -123,7 +123,7 @@ msgstr "Protokollierungsebene"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/tunnels.js:51
 msgid "Name"
-msgstr "Nome"
+msgstr "Name"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/tunnels.js:85
 msgid "No connections"
@@ -131,7 +131,7 @@ msgstr "Keine Verbindungen"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/config.js:55
 msgid "Not Running"
-msgstr "Angehalten"
+msgstr "Läuft nicht"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/config.js:79
 msgid "Obtain a certificate <a %s>here</a>."
@@ -167,8 +167,6 @@ msgid ""
 "The account certificate for your zones authorizing the client to serve as an "
 "Origin for that zone"
 msgstr ""
-"Das Konto-Zertifikat für Ihre Zonen, das den Client berechtigt, als Origin "
-"für diese Zone zu dienen"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/config.js:87
 msgid "The region to which connections are established."
@@ -191,7 +189,7 @@ msgstr "Tunnel"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/tunnels.js:48
 msgid "Tunnels Information"
-msgstr "Tunnel-Informationen"
+msgstr ""
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/log.js:33
 msgid "Unable to read the interface info from /var/log/cloudflared.log."
@@ -207,7 +205,7 @@ msgstr "Oben"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/log.js:91
 msgid "Warn"
-msgstr "Warn"
+msgstr "Achtung"
 
 #: applications/luci-app-cloudflared/htdocs/luci-static/resources/view/cloudflared/config.js:95
 msgid "Warning"

@@ -1,16 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2024-07-20 20:10+0000\n"
-"Last-Translator: ssantos <ssantos@web.de>\n"
-"Language-Team: Portuguese <https://hosted.weblate.org/projects/openwrt/"
-"luciapplicationstor/pt/>\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: applications/luci-app-tor/htdocs/luci-static/resources/view/tor/tor-hs.js:93
 msgid "A pair <code>PublicPort;LocalPort</code> e.g. <code>80;8080</code>."
@@ -34,7 +31,7 @@ msgstr ""
 
 #: applications/luci-app-tor/htdocs/luci-static/resources/view/tor/tor-hs.js:82
 msgid "Description"
-msgstr "Descrição"
+msgstr ""
 
 #: applications/luci-app-tor/htdocs/luci-static/resources/view/tor/tor-hs.js:85
 msgid "Destination address"
@@ -51,7 +48,7 @@ msgstr ""
 
 #: applications/luci-app-tor/root/usr/share/rpcd/acl.d/luci-app-tor.json:3
 msgid "Grant UCI access for luci-app-tor"
-msgstr "Conceder UCI acesso ao luci-app-tor"
+msgstr ""
 
 #: applications/luci-app-tor/htdocs/luci-static/resources/view/tor/tor-hs.js:100
 msgid "Hook Script"

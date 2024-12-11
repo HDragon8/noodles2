@@ -2,15 +2,27 @@
 "require rpc";
 "require form";
 "require baseclass";
-"require adblock-fast.status as adb";
 
-var pkg = adb.pkg;
+var pkg = {
+	get Name() {
+		return "adblock-fast";
+	},
+	get URL() {
+		return "https://docs.openwrt.melmac.net/" + pkg.Name + "/";
+	},
+};
+
+var getInitStatus = rpc.declare({
+	object: "luci." + pkg.Name,
+	method: "getInitStatus",
+	params: ["name"],
+});
 
 return baseclass.extend({
 	title: _("AdBlock-Fast"),
 
 	load: function () {
-		return Promise.all([adb.getInitStatus(pkg.Name)]);
+		return Promise.all([getInitStatus(pkg.Name)]);
 	},
 
 	render: function (data) {

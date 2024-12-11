@@ -4,7 +4,6 @@
 'require form';
 'require view';
 'require fs';
-'require network';
 'require tools.widgets as widgets';
 
 function validateEmpty(section, value) {
@@ -17,15 +16,8 @@ function validateEmpty(section, value) {
 }
 
 return view.extend({
-	load: function() {
-		return Promise.all([
-			network.getNetworks()
-		]);
-	},
-
-	render: function(promises) {
+	render: function() {
 		var m, s, o;
-		var networks = promises[0];
 
 		m = new form.Map('xinetd', _('Xinetd Settings'), _('Here you can configure Xinetd services'));
 
@@ -104,24 +96,6 @@ return view.extend({
 		o.value('UNLISTED', _('UNLISTED'));
 		o.rmempty = false;
 		o.modalonly = true;
-
-		o = s.taboption('basic', form.Value, 'bind', _('Bind address'), _('To which address to bind'));
-		o.datatype = 'ipaddr';
-		[4, 6].forEach(family => {
-			networks.forEach(network => {
-				if (network.getName() !== 'loopback') {
-					const addrs = (family === 6) ? network.getIP6Addrs() : network.getIPAddrs();
-					addrs.forEach(addr => {
-						o.value(addr.split('/')[0], E([], [
-							addr.split('/')[0], ' (',
-							widgets.NetworkSelect.prototype.renderIfaceBadge(network),
-							')'
-						]));
-					});
-				}
-			});
-		});
-		o.rmempty = true;
 
 		o = s.taboption('basic', form.Value, 'id', _('Identification'), _('Required if a services can use tcp and udp.'));
 		o.datatype = 'string';

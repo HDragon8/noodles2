@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-07-15 18:06+0000\n"
-"Last-Translator: Rex_sa <rex.sa@pm.me>\n"
+"PO-Revision-Date: 2021-03-04 13:50+0000\n"
+"Last-Translator: Said Zakaria <said.zakaria@gmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsopkg/ar/>\n"
 "Language: ar\n"
@@ -9,13 +9,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 4.5.1-dev\n"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1095
 msgid "%s used (%1024mB used of %1024mB, %1024mB free)"
 msgstr ""
-"…%s مستخدمة (% 1024 ميغابايت مستخدمة من % 1024 ميغابايت، خالية من %1024 "
-"ميغابايت)"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1155
 msgid "Actions"
@@ -23,7 +21,7 @@ msgstr "إجراءات"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:792
 msgid "Allow overwriting conflicting package files"
-msgstr "السماح باستبدال ملفات الحزم المتضاربة"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:953
 msgid "Automatically remove unused dependencies"
@@ -77,7 +75,7 @@ msgstr "تفاصيل الحزمة <em>%h </em>"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1134
 msgid "Disk space"
-msgstr "مساحة القرص"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1030
 msgid "Dismiss"
@@ -85,17 +83,17 @@ msgstr "إلغاء"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1164
 msgid "Display LuCI translation packages"
-msgstr "عرض حزم ترجمة LuCI"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1181
 msgid "Display all available translation packages"
-msgstr "عرض جميع حزم الترجمة المتاحة"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1167
 msgid ""
 "Display base translation packages and translation packages for already "
 "installed languages only"
-msgstr "عرض حزم الترجمة الأساسية وحزم الترجمة للغات المثبتة بالفعل فقط"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:354
 msgid "Displaying %d-%d of %d"
@@ -115,7 +113,7 @@ msgstr "تنفيذ مدير الحزم"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1139
 msgid "Filter"
-msgstr "المرشحات"
+msgstr "مصفي"
 
 #: applications/luci-app-opkg/root/usr/share/rpcd/acl.d/luci-app-opkg.json:3
 msgid "Grant access to opkg management"
@@ -123,7 +121,7 @@ msgstr "منح حقوق الدخول لإدارة opkg"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1194
 msgid "Hide all translation packages"
-msgstr "إخفاء جميع حزم الترجمة"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:808
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:824
@@ -133,7 +131,7 @@ msgstr "تثبيت"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:780
 msgid "Install suggested translation packages as well"
-msgstr "تثبيت حزم الترجمة المقترحة أيضًا"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:299
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:522
@@ -290,11 +288,11 @@ msgstr "برنامج"
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:761
 msgid "Suggested translations"
-msgstr "الترجمات المقترحة"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:740
 msgid "Suggested translations require approx. %1024mB additional space."
-msgstr "تتطلب الترجمات المقترحة مساحة إضافية تبلغ حوالي % 1024 ميجابايت."
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1013
 msgid "The <em>opkg %h</em> command failed with code <code>%d</code>."
@@ -369,17 +367,17 @@ msgstr "في انتظار إكمال أمر <em> opkg %h </em> …"
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1190
 msgctxt "Display translation packages"
 msgid "all"
-msgstr "الكل"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1177
 msgctxt "Display translation packages"
 msgid "filtered"
-msgstr "مرشحة"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:1203
 msgctxt "Display translation packages"
 msgid "none"
-msgstr "لا شيء"
+msgstr ""
 
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:673
 #: applications/luci-app-opkg/htdocs/luci-static/resources/view/opkg.js:934

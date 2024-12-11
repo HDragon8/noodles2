@@ -2,10 +2,10 @@
 	"luci-app-music-remote-center": {
 		"description": "Grant UCI access for luci-app-music-remote-center",
 		"read": {
-			"uci": [ "owntone" ]
+			"uci": [ "forked-daapd" ]
 		},
 		"write": {
-			"uci": [ "owntone" ]
+			"uci": [ "forked-daapd" ]
 		}
 	}
 }
