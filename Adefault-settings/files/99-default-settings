@@ -12,15 +12,12 @@ if ! uci -q get system.@imm_init[0].lang > "/dev/null"; then
 	EOF
 fi
 
-ln -sf "/sbin/ip" "/usr/bin/ip"
-
 sed -i '/DISTRIB_REVISION/d' /etc/openwrt_release
 echo "DISTRIB_REVISION='R24.2.25'" >> /etc/openwrt_release
 
 sed -i "/log-facility/d" "/etc/dnsmasq.conf"
 echo "log-facility=/dev/null" >> "/etc/dnsmasq.conf"
 
-rm -f "/tmp/luci-indexcache"
-rm -rf "/tmp/luci-modulecache"
+ln -sf "/sbin/ip" "/usr/bin/ip"
 
 exit 0
