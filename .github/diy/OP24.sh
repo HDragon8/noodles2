@@ -182,7 +182,7 @@ package/utils/mhz
 git_sparse_clone openwrt-24.10 "https://github.com/immortalwrt/luci" "immluci" applications protocols/luci-proto-minieap
 mv -n applications/* luciapp/; rm -rf applications
 
-git_sparse_clone openwrt-23.05 "https://github.com/openwrt/packages" "oppkgs1" net/shadowsocks-libev
+#git_sparse_clone openwrt-23.05 "https://github.com/openwrt/packages" "oppkgs1" net/shadowsocks-libev
 
 mv -n luciapp/* ./ ; rm -Rf luciapp
 #svn export https://github.com/coolsnowwolf/luci/trunk/libs/luci-lib-ipkg
