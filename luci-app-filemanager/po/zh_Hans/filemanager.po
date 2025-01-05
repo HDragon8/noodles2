@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-12-29 00:30+0000\n"
-"Last-Translator: Anya Lin <hukk1996@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
-"openwrt/luciapplicationsfilemanager/zh_Hans/>\n"
+"PO-Revision-Date: 2024-12-30 07:13+0000\n"
+"Last-Translator: try496 <pinghejk@gmail.com>\n"
+"Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
+"projects/openwrt/luciapplicationsfilemanager/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.3-dev\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:848
 msgid "Actions"
@@ -245,11 +245,11 @@ msgstr "界面设置"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:830
 msgid "Last Modified"
-msgstr "最后修尬"
+msgstr "最后修改"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1928
 msgid "Loading file..."
-msgstr ""
+msgstr "正在加载文件…"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:791
 msgid "Name"
@@ -268,7 +268,7 @@ msgstr "未选择文件。"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:2464
 msgid "No item selected."
-msgstr "未选择物件。"
+msgstr "未选中任何项目。"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager/HexEditor.js:1226
 msgid "Offset (h)"
@@ -276,15 +276,15 @@ msgstr "Offset (hex)"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1052
 msgid "Padding Max:"
-msgstr "最大 Padding:"
+msgstr "最大填充值:"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1043
 msgid "Padding Min:"
-msgstr "最小 Padding:"
+msgstr "最小填充值:"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1034
 msgid "Padding:"
-msgstr "Padding:"
+msgstr "填充:"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1075
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1437
@@ -296,7 +296,7 @@ msgstr "保存"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:2224
 msgid "Saving file: \"%s\"..."
-msgstr ""
+msgstr "正在保存文件：'%s'..."
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager/HexEditor.js:428
 msgid "Search ASCII"
@@ -304,11 +304,11 @@ msgstr "搜索 ASCII"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager/HexEditor.js:431
 msgid "Search HEX (e.g., 4F6B)"
-msgstr "搜索 HEX (e.g., 4F6B)"
+msgstr "搜索十六进制（例如，4F6B）"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager/HexEditor.js:434
 msgid "Search RegExp (e.g., \\d{3})"
-msgstr "搜索 RegExp (e.g., \\d{3})"
+msgstr "搜索正则表达式（例如，\\d{3}）"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:916
 msgid "Select a file from the list to edit it here."
@@ -328,7 +328,7 @@ msgstr "设置已成功保存。"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:817
 msgid "Size"
-msgstr "文件大小"
+msgstr "大小"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:834
 msgid "Sort by Last Modified"
@@ -340,7 +340,7 @@ msgstr "按名称排序"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:821
 msgid "Sort by Size"
-msgstr "文件大小"
+msgstr "按大小排序"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:808
 msgid "Sort by Type"
@@ -392,11 +392,11 @@ msgstr "切换到十六进制模式"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:804
 msgid "Type"
-msgstr "類型"
+msgstr "类型"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:1786
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:890
 msgid "Upload File"
@@ -435,7 +435,7 @@ msgstr "文件"
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:2458
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:2467
 msgid "item"
-msgstr "物件"
+msgstr "项目"
 
 #: applications/luci-app-filemanager/htdocs/luci-static/resources/view/system/filemanager.js:2035
 msgid "symbolic link"
