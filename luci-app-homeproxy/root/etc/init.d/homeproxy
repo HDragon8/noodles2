@@ -67,6 +67,7 @@ start_service() {
 		config_get_bool auto_update "subscription" "auto_update" "0"
 		if [ "$auto_update" = "1" ]; then
 			config_get auto_update_time "subscription" "auto_update_time" "2"
+			sed -i "/update_crond.sh/d" "/etc/crontabs/root" 2>"/dev/null"
 			echo -e "0 $auto_update_time * * * $HP_DIR/scripts/update_crond.sh" >> "/etc/crontabs/root"
 			/etc/init.d/cron restart
 		fi
@@ -150,7 +151,7 @@ start_service() {
 			procd_add_jail "sing-box-c" log procfs
 			procd_add_jail_mount "$RUN_DIR/sing-box-c.json"
 			procd_add_jail_mount_rw "$RUN_DIR/sing-box-c.log"
-			procd_add_jail_mount_rw "$RUN_DIR/cache.db"
+			[ "$routing_mode" != "bypass_mainland_china" ] || procd_add_jail_mount_rw "$RUN_DIR/cache.db"
 			procd_add_jail_mount "$HP_DIR/certs/"
 			procd_add_jail_mount "/etc/ssl/"
 			procd_add_jail_mount "/etc/localtime"
@@ -216,20 +217,24 @@ start_service() {
 	procd_set_param respawn
 	procd_close_instance
 
-	# Prepare ruleset directory for custom routing mode
-	if [ "$routing_mode" = "custom" ]; then
+	case "$routing_mode" in
+	"bypass_mainland_china")
+		# Prepare cache db
+		[ -e "$RUN_DIR/cache.db" ] || touch "$RUN_DIR/cache.db"
+		;;
+	"custom")
+		# Prepare ruleset directory
 		[ -d "$HP_DIR/ruleset" ] || mkdir -p "$HP_DIR/ruleset"
-	fi
+		;;
+	esac
 
-	# Update permissions for ujail
-	if [ "$outbound_node" != "nil" ]; then
-		echo > "$RUN_DIR/sing-box-c.log"
-		chmod 0644 "$HP_DIR/resources/gfw_list.txt"
-	fi
+	[ "$outbound_node" = "nil" ] || echo > "$RUN_DIR/sing-box-c.log"
 	if [ "$server_enabled" = "1" ]; then
 		echo > "$RUN_DIR/sing-box-s.log"
 		mkdir -p "$HP_DIR/certs"
 	fi
+
+	# Update permissions for ujail
 	chown -R sing-box:sing-box "$RUN_DIR"
 
 	# Setup firewall
@@ -286,8 +291,8 @@ stop_service() {
 		nft flush set inet fw4 "$i"
 		nft delete set inet fw4 "$i"
 	done 2>"/dev/null"
-	echo > "$RUN_DIR/fw4_pre.nft" 2>"/dev/null"
-	echo > "$RUN_DIR/fw4_post.nft" 2>"/dev/null"
+	echo 2>"/dev/null" > "$RUN_DIR/fw4_pre.nft"
+	echo 2>"/dev/null" > "$RUN_DIR/fw4_post.nft"
 	fw4 reload >"/dev/null" 2>&1
 
 	# Remove DNS hijack
