@@ -1,7 +1,7 @@
 #ifndef APP_FILTER_H
 #define APP_FILTER_H
 
-#define AF_VERSION "5.0"
+#define AF_VERSION "5.1"
 #define AF_FEATURE_CONFIG_FILE "/tmp/feature.cfg"
 
 #define MAX_DPI_PKT_NUM 64
@@ -62,6 +62,8 @@ enum AF_FEATURE_PARAM_INDEX{
 
 enum E_MSG_TYPE{
 	AF_MSG_INIT,
+	AF_MSG_ADD_FEATURE,
+	AF_MSG_CLEAN_FEATURE,
 	AF_MSG_MAX
 };
 enum AF_WORK_MODE {
@@ -69,10 +71,9 @@ enum AF_WORK_MODE {
 	AF_MODE_BYPASS,
 	AF_MODE_BRIDGE,
 };
-
+#define MAX_AF_MSG_DATA_LEN 800
 typedef struct af_msg{
 	int action;
-	void *data;
 }af_msg_t;
 
 struct af_msg_hdr{
@@ -165,6 +166,7 @@ typedef struct flow_info{
 	u_int8_t drop;
 	u_int8_t dir;
 	u_int16_t total_len;
+	u_int8_t client_hello;
 	af_feature_node_t *feature;
 }flow_info_t;
 
@@ -177,6 +179,5 @@ void af_mac_list_init(void);
 void af_mac_list_clear(void);
 af_mac_info_t * find_af_mac(unsigned char *mac);
 int is_user_match_enable(void);
-extern int g_oaf_enable;
 
 #endif
