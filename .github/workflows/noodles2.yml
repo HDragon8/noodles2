@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [OP24]
+        target: [istoreos]
 
     steps:
     - name: Checkout
