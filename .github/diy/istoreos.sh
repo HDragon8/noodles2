@@ -254,6 +254,7 @@ rm -rf luci-app-turboacc
 rm -rf luci-app-samba
 rm -rf luci-app-design-config
 rm -rf luci-app-pppwn
+rm -rf ntfs3-mount
 
 sed -i 's/PKG_VERSION:=20240302/PKG_VERSION:=20240223/g; s/PKG_RELEASE:=$(AUTORELESE)/PKG_RELEASE:=1/g' webd/Makefile
 sed -i 's/luci-lib-ipkg/luci-base/g' luci-app-store/Makefile
