@@ -14,24 +14,30 @@ var callServiceList = rpc.declare({
 });
 
 function getServiceStatus() {
-	return L.resolveDefault(callServiceList('alist'), {}).then(function (res) {
+	return L.resolveDefault(callServiceList('openlist2'), {}).then(function (res) {
 		var isRunning = false;
 		try {
-			isRunning = res['alist']['instances']['alist']['running'];
+			isRunning = res['openlist2']['instances']['openlist2']['running'];
 		} catch (e) { }
 		return isRunning;
 	});
 }
 
-function renderStatus(isRunning, protocol, webport) {
+function renderStatus(isRunning, protocol, webport, site_url) {
 	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 	var renderHTML;
 	if (isRunning) {
-		var button = String.format('<input class="cbi-button-reload" type="button" style="margin-left: 50px" value="%s" onclick="window.open(\'%s//%s:%s/\')">',
-			_('Open Web Interface'), protocol, window.location.hostname, webport);
-		renderHTML = spanTemp.format('green', 'Alist', _('RUNNING')) + button;
+		var buttonUrl = '';
+		if (site_url && site_url.trim() !== '') {
+			buttonUrl = site_url;
+		} else {
+			buttonUrl = String.format('%s//%s:%s/', protocol, window.location.hostname, webport);
+		}
+		var button = String.format('<input class="cbi-button-reload" type="button" style="margin-left: 50px" value="%s" onclick="window.open(\'%s\')">',
+			_('Open Web Interface'), buttonUrl);
+		renderHTML = spanTemp.format('green', 'OpenList', _('RUNNING')) + button;
 	} else {
-		renderHTML = spanTemp.format('red', 'Alist', _('NOT RUNNING'));
+		renderHTML = spanTemp.format('red', 'OpenList', _('NOT RUNNING'));
 	}
 
 	return renderHTML;
@@ -40,15 +46,16 @@ function renderStatus(isRunning, protocol, webport) {
 return view.extend({
 	load: function () {
 		return Promise.all([
-			uci.load('alist')
+			uci.load('openlist2')
 		]);
 	},
 
 	handleResetPassword: async function (data) {
-		var data_dir = uci.get(data[0], '@alist[0]', 'data_dir') || '/etc/alist';
+		var data_dir = uci.get(data[0], '@openlist2[0]', 'data_dir') || '/etc/openlist2';
 		try {
-			var newpassword = await fs.exec('/usr/bin/alist', ['admin', 'random', '--data', data_dir]);
-			var new_password = newpassword.stderr.match(/password:\s*(\S+)/)[1];
+			var newpassword = await fs.exec('/usr/bin/openlist2', ['admin', 'random', '--data', data_dir]);
+			var new_password = newpassword.stdout.match(/password:\s*(\S+)/)[1];
+
 			const textArea = document.createElement('textarea');
 			textArea.value = new_password;
 			document.body.appendChild(textArea);
@@ -63,20 +70,18 @@ return view.extend({
 
 	render: function (data) {
 		var m, s, o;
-		var webport = uci.get(data[0], '@alist[0]', 'port') || '5244';
-		var ssl = uci.get(data[0], '@alist[0]', 'ssl') || '0';
+		var webport = uci.get(data[0], '@openlist2[0]', 'port') || '5244';
+		var ssl = uci.get(data[0], '@openlist2[0]', 'ssl') || '0';
 		var protocol;
 		if (ssl === '0') {
 			protocol = 'http:';
 		} else if (ssl === '1') {
 			protocol = 'https:';
 		}
+		var site_url = uci.get(data[0], '@openlist2[0]', 'site_url') || '';
 
-		m = new form.Map('alist', _('Alist'),
-			_('A file list program that supports multiple storage.') +
-			'<br><a href="https://alist.nn.ci/zh/guide/drivers/local.html" target="_blank">' +
-			_('User Manual') +
-			'</a>');
+		m = new form.Map('openlist2', _('OpenList'),
+			_('A file list program that supports multiple storage.'));
 
 		s = m.section(form.TypedSection);
 		s.anonymous = true;
@@ -86,7 +91,7 @@ return view.extend({
 			poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then(function (res) {
 					var view = document.getElementById('service_status');
-					view.innerHTML = renderStatus(res, protocol, webport);
+					view.innerHTML = renderStatus(res, protocol, webport, site_url);
 				});
 			});
 
@@ -95,7 +100,7 @@ return view.extend({
 			]);
 		}
 
-		s = m.section(form.NamedSection, '@alist[0]', 'alist');
+		s = m.section(form.NamedSection, '@openlist2[0]', 'openlist2');
 
 		s.tab('basic', _('Basic Settings'));
 		s.tab('global', _('Global Settings'));
@@ -127,10 +132,10 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.taboption('basic', form.Value, 'data_dir', _('Data directory'));
-		o.default = '/etc/alist';
+		o.default = '/etc/openlist2';
 
 		o = s.taboption('basic', form.Value, 'temp_dir', _('Cache directory'));
-		o.default = '/tmp/alist';
+		o.default = '/tmp/openlist2';
 		o.rmempty = false;
 
 		o = s.taboption('basic', form.Button, '_newpassword', _('Reset Password'),
@@ -181,7 +186,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.taboption('log', form.Value, 'log_path', _('Log path'));
-		o.default = '/var/log/alist.log';
+		o.default = '/var/log/openlist2.log';
 		o.rmempty = false;
 		o.depends('log', '1');
 
@@ -216,39 +221,39 @@ return view.extend({
 		o.value('postgres', _('PostgreSQL'));
 
 		o = s.taboption('database', form.Value, 'mysql_host', _('Database Host'));
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_port', _('Database Port'));
 		o.datatype = 'port';
 		o.default = '3306';
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_username', _('Database Username'));
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_password', _('Database Password'));
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_database', _('Database Name'));
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_table_prefix', _('Database Table Prefix'));
 		o.default = 'x_';
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_ssl_mode', _('Database SSL Mode'));
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		o = s.taboption('database', form.Value, 'mysql_dsn', _('Database DSN'));
-		o.depends('database_type','mysql');
-		o.depends('database_type','postgres');
+		o.depends('database_type', 'mysql');
+		o.depends('database_type', 'postgres');
 
 		// scheme
 		o = s.taboption('scheme', form.Flag, 'ssl', _('Enable SSL'));
