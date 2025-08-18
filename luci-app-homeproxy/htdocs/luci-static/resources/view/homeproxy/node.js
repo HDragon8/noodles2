@@ -63,7 +63,7 @@ function parseShareLink(uri, features) {
 				tls: '1',
 				tls_sni: params.get('peer'),
 				tls_alpn: params.get('alpn'),
-				tls_insecure: params.get('insecure') ? '1' : '0'
+				tls_insecure: (params.get('insecure') === '1') ? '1' : '0'
 			};
 
 			break;
@@ -624,7 +624,7 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o.depends('type', 'ssh');
 	o.modalonly = true;
 
-	o = s.option(form.Value, 'ssh_priv_key', _('Private key'));
+	o = s.option(form.DynamicList, 'ssh_priv_key', _('Private key'));
 	o.password = true;
 	o.depends('type', 'ssh');
 	o.modalonly = true;

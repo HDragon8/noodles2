@@ -13,7 +13,7 @@ local uci    = require("uci")
 
 local InternetDetector = {
 	mode           = 0,		-- 0: disabled, 1: Service, 2: UI detector
-	enableLogger   = true,
+	loggingLevel   = 6,
 	hostname       = "OpenWrt",
 	appName        = "internet-detector",
 	commonDir      = "/tmp/run",
@@ -39,13 +39,23 @@ local InternetDetector = {
 		iface               = nil,
 		instance            = nil,
 	},
+	logLevels = {
+		emerg   = { level = syslog.LOG_EMERG,   num = 0 },
+		alert   = { level = syslog.LOG_ALERT,   num = 1 },
+		crit    = { level = syslog.LOG_CRIT,    num = 2 },
+		err     = { level = syslog.LOG_ERR,     num = 3 },
+		warning = { level = syslog.LOG_WARNING, num = 4 },
+		notice  = { level = syslog.LOG_NOTICE,  num = 5 },
+		info    = { level = syslog.LOG_INFO,    num = 6 },
+		debug   = { level = syslog.LOG_DEBUG,   num = 7 },
+	},
 	modules       = {},
 	parsedHosts   = {},
 	uiCounter     = 0,
 }
 InternetDetector.configDir  = string.format("/etc/%s", InternetDetector.appName)
 InternetDetector.modulesDir = string.format(
-	"%s/%s", InternetDetector.libDir, InternetDetector.appName)
+	"%s/%s/modules", InternetDetector.libDir, InternetDetector.appName)
 
 -- Loading settings from UCI
 
@@ -56,9 +66,9 @@ if mode ~= nil then
 elseif err then
 	io.stderr:write(string.format("Error: %s\n", err))
 end
-local enableLogger, err = uciCursor:get(InternetDetector.appName, "config", "enable_logger")
-if enableLogger ~= nil then
-	InternetDetector.enableLogger = (tonumber(enableLogger) ~= 0)
+local loggingLevel, err = uciCursor:get(InternetDetector.appName, "config", "logging_level")
+if loggingLevel ~= nil then
+	InternetDetector.loggingLevel = tonumber(loggingLevel)
 elseif err then
 	io.stderr:write(string.format("Error: %s\n", err))
 end
@@ -141,19 +151,19 @@ function InternetDetector:statusJson(inet, instance, t)
 end
 
 function InternetDetector:writeLogMessage(level, msg)
-	if self.enableLogger then
-		local levels = {
-			emerg   = syslog.LOG_EMERG,
-			alert   = syslog.LOG_ALERT,
-			crit    = syslog.LOG_CRIT,
-			err     = syslog.LOG_ERR,
-			warning = syslog.LOG_WARNING,
-			notice  = syslog.LOG_NOTICE,
-			info    = syslog.LOG_INFO,
-			debug   = syslog.LOG_DEBUG,
-		}
-		syslog.syslog(levels[level] or syslog.LOG_INFO, string.format(
-			"%s: %s", self.serviceConfig.instance or "", msg))
+	local levelItem  = self.logLevels[level]
+	local levelValue = (levelItem and levelItem.level) or self.logLevels["info"].level
+	local num        = (levelItem and levelItem.num) or self.logLevels["info"].num
+	if num <= self.loggingLevel then
+		syslog.syslog(levelValue, string.format(
+				"%s: %s", self.serviceConfig.instance or "", msg))
+	end
+end
+
+function InternetDetector:debugOutput(msg)
+	if self.debug then
+		io.stdout:write(string.format("[%s] %s\n", os.date("%Y.%m.%d-%H:%M:%S"), msg))
+		io.stdout:flush()
 	end
 end
 
@@ -175,15 +185,16 @@ function InternetDetector:loadModules()
 					if modConfig.enabled == 1 then
 						local m
 						if self.debug then
-							m = require(string.format("%s.%s", self.appName, modName))
+							m = require(string.format("%s.modules.%s", self.appName, modName))
 						else
-							m = self:prequire(string.format("%s.%s", self.appName, modName))
+							m = self:prequire(string.format("%s.modules.%s", self.appName, modName))
 						end
 						if m then
-							m.config     = self
-							m.syslog     = function(level, msg) self:writeLogMessage(level, msg) end
-							m.writeValue = function(filePath, str) return self:writeValueToFile(filePath, str) end
-							m.readValue  = function(filePath) return self:readValueFromFile(filePath) end
+							m.config      = self
+							m.syslog      = function(level, msg) self:writeLogMessage(level, msg) end
+							m.debugOutput = function(msg) self:debugOutput(msg) end
+							m.writeValue  = function(filePath, str) return self:writeValueToFile(filePath, str) end
+							m.readValue   = function(filePath) return self:readValueFromFile(filePath) end
 							m:init(modConfig)
 							self.modules[#self.modules + 1] = m
 						end
@@ -223,12 +234,8 @@ function InternetDetector:pingHost(host)
 	)
 	local retCode = os.execute(ping)
 
-	if self.debug then
-		io.stdout:write(string.format(
-			"--- Ping ---\ntime = %s\n%s\nretCode = %s\n", os.time(), ping, retCode)
-		)
-		io.stdout:flush()
-	end
+	self:debugOutput(string.format(
+		"--- Ping ---\ntime = %s\n%s\nretCode = %s", os.time(), ping, retCode))
 
 	return retCode
 end
@@ -238,20 +245,17 @@ function InternetDetector:TCPConnectionToHost(host, port)
 	local saTable, errMsg, errNum = socket.getaddrinfo(host, port or self.serviceConfig.tcp_port)
 
 	if not saTable then
-		if self.debug then
-			io.stdout:write(string.format(
-				"GETADDRINFO ERROR: %s, %s\n", errMsg, errNum))
-		end
+		self:debugOutput(string.format(
+			"GETADDRINFO ERROR: %s, %s", errMsg, errNum))
 	else
 		local family = saTable[1].family
+
 		if family then
 			local sock, errMsg, errNum = socket.socket(family, socket.SOCK_STREAM, 0)
 
 			if not sock then
-				if self.debug then
-					io.stdout:write(string.format(
-						"SOCKET ERROR: %s, %s\n", errMsg, errNum))
-				end
+				self:debugOutput(string.format(
+					"SOCKET ERROR: %s, %s", errMsg, errNum))
 				return retCode
 			end
 
@@ -264,10 +268,8 @@ function InternetDetector:TCPConnectionToHost(host, port)
 				local ok, errMsg, errNum = socket.setsockopt(sock, socket.SOL_SOCKET,
 					socket.SO_BINDTODEVICE, self.serviceConfig.iface)
 				if not ok then
-					if self.debug then
-						io.stdout:write(string.format(
-							"SOCKET ERROR: %s, %s\n", errMsg, errNum))
-					end
+					self:debugOutput(string.format(
+						"SOCKET ERROR: %s, %s", errMsg, errNum))
 					unistd.close(sock)
 					return retCode
 				end
@@ -277,23 +279,23 @@ function InternetDetector:TCPConnectionToHost(host, port)
 
 			if self.debug then
 				if not success then
-					io.stdout:write(string.format(
-						"SOCKET CONNECT ERROR: %s\n", tostring(success)))
+					self:debugOutput(string.format(
+						"SOCKET CONNECT ERROR: %s", tostring(success)))
 				end
 				local sockTable, err_s, e_s = socket.getsockname(sock)
 				local peerTable, err_p, e_p = socket.getpeername(sock)
 				if not sockTable then
 					sockTable = {}
-					io.stdout:write(
-						string.format("SOCKET ERROR: %s, %s\n", err_s, e_s))
+					self:debugOutput(
+						string.format("SOCKET ERROR: %s, %s", err_s, e_s))
 				end
 				if not peerTable then
 					peerTable = {}
-					io.stdout:write(
-						string.format("SOCKET ERROR: %s, %s\n", err_p, e_p))
+					self:debugOutput(
+						string.format("SOCKET ERROR: %s, %s", err_p, e_p))
 				end
-				io.stdout:write(string.format(
-					"--- TCP ---\ntime = %s\nconnection_timeout = %s\niface = %s\nhost:port = [%s]:%s\nsockname = [%s]:%s\npeername = [%s]:%s\nsuccess = %s\n",
+				self:debugOutput(string.format(
+					"--- TCP ---\ntime = %s\nconnection_timeout = %s\niface = %s\nhost:port = [%s]:%s\nsockname = [%s]:%s\npeername = [%s]:%s\nsuccess = %s",
 					os.time(),
 					self.serviceConfig.connection_timeout,
 					tostring(self.serviceConfig.iface),
@@ -305,7 +307,6 @@ function InternetDetector:TCPConnectionToHost(host, port)
 					tostring(peerTable.port),
 					tostring(success))
 				)
-				io.stdout:flush()
 			end
 
 			socket.shutdown(sock, socket.SHUT_RDWR)
@@ -351,33 +352,41 @@ function InternetDetector:mainLoop()
 	local interval      = self.serviceConfig.interval_up
 	local modulesStatus = {}
 	local counter       = 0
-	local onStart       = true
 	local inetChecked   = false
 	_RUNNING            = true
 	while _RUNNING do
 		if counter == 0 or counter >= interval then
-			currentStatus = self:checkHosts()
-			if onStart or not stat.stat(self.statusFile) then
+			if self.debug then
+				currentStatus = self:checkHosts()
+			else
+				local ret, status = pcall(self.checkHosts, self, currentStatus)
+				if ret then
+					currentStatus = status
+				else
+					self:writeLogMessage("err", "Unknown error while checking host!")
+				end
+			end
+			if not stat.stat(self.statusFile) then
 				self:writeValueToFile(self.statusFile, self:statusJson(
 					currentStatus, self.serviceConfig.instance))
-				onStart = false
 			end
 
 			if currentStatus == 0 then
 				interval = self.serviceConfig.interval_up
-				if lastStatus ~= nil and currentStatus ~= lastStatus then
+				if currentStatus ~= lastStatus then
 					self:writeValueToFile(self.statusFile, self:statusJson(
 						currentStatus, self.serviceConfig.instance))
 					self:writeLogMessage("notice", "Connected")
 				end
 			else
 				interval = self.serviceConfig.interval_down
-				if lastStatus ~= nil and currentStatus ~= lastStatus then
+				if currentStatus ~= lastStatus then
 					self:writeValueToFile(self.statusFile, self:statusJson(
 						currentStatus, self.serviceConfig.instance))
 					self:writeLogMessage("notice", "Disconnected")
 				end
 			end
+
 			counter = 0
 		end
 
@@ -391,7 +400,15 @@ function InternetDetector:mainLoop()
 				mTimeDiff = 1
 			end
 			mLastTime = mTimeNow
-			e:run(currentStatus, lastStatus, mTimeDiff, mTimeNow, inetChecked)
+
+			if self.debug then
+				e:run(currentStatus, lastStatus, mTimeDiff, mTimeNow, inetChecked)
+			else
+				local ret = pcall(e.run, e, currentStatus, lastStatus, mTimeDiff, mTimeNow, inetChecked)
+				if not ret then
+					self:writeLogMessage("err", string.format("%s: Unknown error!", e.name))
+				end
+			end
 		end
 
 		local modStatusChanged = false
@@ -418,7 +435,6 @@ function InternetDetector:mainLoop()
 				self.uiCounter = self.uiCounter + 1
 			end
 			uiLastTime = uiTimeNow
-
 			if self.uiCounter >= self.uiRunTime then
 				self:breakMainLoop(signal.SIGTERM)
 			end
@@ -549,7 +565,7 @@ end
 function InternetDetector:run()
 	local pidValue = unistd.getpid()
 	self:writeValueToFile(self.pidFile, pidValue)
-	if self.enableLogger then
+	if self.loggingLevel > 0 then
 		syslog.openlog(self.appName, syslog.LOG_PID, syslog.LOG_DAEMON)
 	end
 	self:writeLogMessage("info", "started")
@@ -572,8 +588,8 @@ function InternetDetector:run()
 			f = function(t, prefix)
 				tables[t] = true
 				for k, v in pairs(t) do
-					io.stdout:write(string.format(
-						"%s%s = %s\n", prefix, k, tostring(v))
+					self:debugOutput(string.format(
+						"%s%s = %s", prefix, k, tostring(v))
 					)
 					if type(v) == "table" and not tables[v] then
 						f(v, string.format("%s%s.", prefix, k))
@@ -583,9 +599,8 @@ function InternetDetector:run()
 			return f
 		end
 
-		io.stdout:write("--- Config ---\n")
+		self:debugOutput("--- Config ---")
 		inspectTable()(self, "self.")
-		io.stdout:flush()
 	end
 
 	self:writeValueToFile(
@@ -598,7 +613,7 @@ function InternetDetector:run()
 	end
 
 	self:removeProcessFiles()
-	if self.enableLogger then
+	if self.loggingLevel > 0 then
 		self:writeLogMessage("info", "stoped")
 		syslog.closelog()
 	end
@@ -639,7 +654,7 @@ function InternetDetector:setServiceConfig(instance)
 	if self:loadUCIConfig("instance", instance) then
 		self:parseHosts()
 		if self.mode == 2 then
-			self.enableLogger = false
+			self.loggingLevel = 0
 			self.noModules    = true
 		end
 		return true
