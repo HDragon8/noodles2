@@ -762,14 +762,11 @@ return view.extend({
 			list.value(2000, '2 '   + _('sec'));
 		}
 
-		// enabled
-		o = s.taboption('main', form.Flag, 'enabled',
-			_('Enabled'),
-		);
-		o.rmempty   = false;
-		o.default   = '1';
-		o.editable  = true;
-		o.modalonly = false;
+		// description
+		o = s.taboption('main', form.Value, 'description',
+			_("Description"));
+		o.datatype  = 'maxlength(30)';
+		o.modalonly = null;
 
 		// hosts
 		o = s.taboption('main', form.DynamicList,
@@ -847,8 +844,6 @@ return view.extend({
 		o.value(1);
 		o.value(2);
 		o.value(3);
-		o.value(4);
-		o.value(5);
 		o.default = '2';
 
 		// connection_timeout
@@ -862,12 +857,16 @@ return view.extend({
 		o.value(3,  '3 ' + _('sec'));
 		o.value(4,  '4 ' + _('sec'));
 		o.value(5,  '5 ' + _('sec'));
-		o.value(6,  '6 ' + _('sec'));
-		o.value(7,  '7 ' + _('sec'));
-		o.value(8,  '8 ' + _('sec'));
-		o.value(9,  '9 ' + _('sec'));
-		o.value(10, '10 ' + _('sec'));
 		o.default = '2';
+
+		// enabled
+		o = s.taboption('main', form.Flag, 'enabled',
+			_('Enabled'),
+		);
+		o.rmempty   = false;
+		o.default   = '1';
+		o.editable  = true;
+		o.modalonly = false;
 
 
 		/* Modules */
@@ -1563,7 +1562,7 @@ return view.extend({
 						// enabled
 						o = s.taboption('telegram', form.Flag,
 							'mod_telegram_enabled',
-							_('Enable'));
+							_('Enabled'));
 						o.rmempty   = false;
 						o.modalonly = true;
 
