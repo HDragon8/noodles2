@@ -28,7 +28,7 @@ local Module = {
 	msgSendAttempts      = 3,
 	msgSendTimeout       = 5,
 	curlExec             = "/usr/bin/curl",
-	curlParams           = "-s",
+	curlParams           = "-s --no-keepalive",
 	status               = nil,
 	_enabled             = false,
 	_deadCounter         = 0,
@@ -225,7 +225,7 @@ function Module:run(currentStatus, lastStatus, timeDiff, timeNow, inetChecked)
 			end
 		end
 		self._connected = false
-	else
+	elseif currentStatus == 0 then
 		self._deadCounter       = 0
 		self._msgSentDisconnect = false
 
