@@ -29,7 +29,6 @@ o = s:option(DynamicList, "chnroute_url", translate("China IPs(chnroute) Update 
 o:depends("geo2rule", false)
 o:value("https://fastly.jsdelivr.net/gh/gaoyifan/china-operator-ip@ip-lists/china.txt", translate("gaoyifan/china-operator-ip/china"))
 o:value("https://ispip.clang.cn/all_cn.txt", translate("Clang.CN"))
-o:value("https://ispip.clang.cn/all_cn_cidr.txt", translate("Clang.CN.CIDR"))
 o:value("https://fastly.jsdelivr.net/gh/soffchen/GeoIP2-CN@release/CN-ip-cidr.txt", translate("soffchen/GeoIP2-CN"))
 o:value("https://fastly.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/CN-ip-cidr.txt", translate("Hackl0us/GeoIP2-CN"))
 o:value("https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ChinaMax/ChinaMax_IP_No_IPv6.txt", translate("ios_rule_script/ChinaMax_IP_No_IPv6"))
@@ -86,6 +85,13 @@ if has_xray or has_singbox then
 			.. "<li>" .. "2." .. translate("Once enabled, the rule list can support GeoIP/Geosite rules.") .. "</li>"
 			.. "<li>" .. translate("Note: Increases resource usage; Geosite analysis is only supported in ChinaDNS-NG and SmartDNS modes.") .. "</li>"
 			.. "</ul>"
+		function o.write(self, section, value)
+			local old = m:get(section, self.option) or "0"
+			if old ~= value then
+				m:set("@global[0]", "flush_set", "1")
+			end
+			return Flag.write(self, section, value)
+		end
 	end
 end
 
